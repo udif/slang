@@ -415,16 +415,18 @@ bool CommandLine::parse(span<const string_view> args, ParseOptions options) {
 
         // check if arg is in the list of commands to skip
         auto cmd_ignore_option = findOption("cmd_ignore");
-        std::map<std::string, int>* cmdIgnore = std::get<std::map<std::string, int>*>(cmd_ignore_option->storage);
+        std::map<std::string, int>* cmdIgnore =
+            std::get<std::map<std::string, int>*>(cmd_ignore_option->storage);
         string_view ignore_arg = arg;
         // if we ignore a vendor command of the form +xx ,
         // we match on any +xx+yyy command as +yy is the command's argument
         if (arg[0] == '+') {
             size_t plusIndex = arg.substr(1).find_first_of('+');
             if (plusIndex != string_view::npos)
-                ignore_arg = arg.substr(0, plusIndex + 1); // +1 because we started from arg.substr(1)
+                ignore_arg =
+                    arg.substr(0, plusIndex + 1); // +1 because we started from arg.substr(1)
         }
-        if (auto it {cmdIgnore->find(std::string(ignore_arg))}; it != cmdIgnore->end()) {
+        if (auto it{ cmdIgnore->find(std::string(ignore_arg)) }; it != cmdIgnore->end()) {
             // if yes, find how many args to skip
             skip = it->second;
             continue;
@@ -432,8 +434,9 @@ bool CommandLine::parse(span<const string_view> args, ParseOptions options) {
 
         // check if arg is in the list of commands to translate
         auto cmd_rename_option = findOption("cmd_rename");
-        std::map<std::string, std::string>* cmdRename = std::get<std::map<std::string, std::string>*>(cmd_rename_option->storage);
-        if (auto it {cmdRename->find(std::string(arg))}; it != cmdRename->end()) {
+        std::map<std::string, std::string>* cmdRename =
+            std::get<std::map<std::string, std::string>*>(cmd_rename_option->storage);
+        if (auto it{ cmdRename->find(std::string(arg)) }; it != cmdRename->end()) {
             // if yes, rename argument
             arg = it->second;
         }
@@ -547,7 +550,8 @@ std::string CommandLine::getHelpText(string_view overview) const {
                 result += '\n';
                 first = false;
             }
-        } else {
+        }
+        else {
             result += "\n";
         }
     }
@@ -861,7 +865,8 @@ std::string CommandLine::Option::set(OptionCallback& target, string_view, string
     return target(value);
 }
 
-std::string CommandLine::Option::set(std::map<std::string, int>& target, string_view name, string_view value) {
+std::string CommandLine::Option::set(std::map<std::string, int>& target, string_view name,
+                                     string_view value) {
     size_t equalsIndex = value.find_first_of(',');
     string_view num_args;
     if (equalsIndex != string_view::npos) {
@@ -876,7 +881,8 @@ std::string CommandLine::Option::set(std::map<std::string, int>& target, string_
     return {};
 }
 
-std::string CommandLine::Option::set(std::map<std::string, std::string>& target, string_view, string_view value) {
+std::string CommandLine::Option::set(std::map<std::string, std::string>& target, string_view,
+                                     string_view value) {
     size_t equalsIndex = value.find_first_of(',');
     string_view slang_name;
     if (equalsIndex != string_view::npos) {
